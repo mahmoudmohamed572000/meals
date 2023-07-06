@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meals/layout/home_layout.dart';
 import 'package:meals/models/meal.dart';
 import 'package:meals/modules/filters/filters_screen.dart';
 import 'package:meals/modules/meals/meal_screen.dart';
@@ -7,21 +8,27 @@ import 'package:meals/modules/themes/themes_screen.dart';
 Widget buildSectionTitle(context, text) {
   return Container(
     margin: const EdgeInsets.symmetric(vertical: 20.0),
-    child: Text(text, style: Theme.of(context).textTheme.titleLarge),
+    child: Text(
+      text,
+      style: Theme.of(context).textTheme.titleLarge,
+      textAlign: TextAlign.center,
+    ),
   );
 }
 
-Widget buildContainer(child) {
+Widget buildContainer(child, context) {
+  var isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+  var dw = MediaQuery.of(context).size.width;
   return Container(
     decoration: BoxDecoration(
       color: Colors.white,
       border: Border.all(color: Colors.grey),
       borderRadius: BorderRadius.circular(10.0),
     ),
-    // margin: const EdgeInsets.all(10.0),
+    margin: const EdgeInsets.all(15),
     padding: const EdgeInsets.all(10.0),
-    height: 150.0,
-    width: 300.0,
+    height: 170.0,
+    width: isLandscape ? dw * 0.5 - 30 : dw,
     child: child,
   );
 }
@@ -77,7 +84,7 @@ Widget mainDrawer(context) {
           'Meals',
           Icons.restaurant,
           () {
-            Navigator.pushReplacementNamed(context, '/');
+            Navigator.pushReplacementNamed(context, HomeLayout.routeName);
           },
           context,
         ),
@@ -99,10 +106,11 @@ Widget mainDrawer(context) {
 
 Widget buildListView(meals, context) {
   var isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+  var dw = MediaQuery.of(context).size.width;
   return GridView.builder(
     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-      maxCrossAxisExtent: 400.0,
-      childAspectRatio: isLandscape ? 2.3 / 2 : 2.5 / 2,
+      maxCrossAxisExtent: dw <= 400 ? 400 : 500,
+      childAspectRatio: isLandscape ? dw / (dw * 0.9) : dw / (dw * 0.8),
       crossAxisSpacing: 0,
       mainAxisSpacing: 0,
     ),
@@ -151,7 +159,7 @@ Widget buildListView(meals, context) {
                   bottom: 10.0,
                   right: 10.0,
                   child: Container(
-                    width: 300.0,
+                    width: 290.0,
                     color: Colors.black54,
                     padding: const EdgeInsets.symmetric(
                       vertical: 10.0,
@@ -160,7 +168,7 @@ Widget buildListView(meals, context) {
                     child: Text(
                       meals[index].title,
                       style: const TextStyle(
-                        fontSize: 25.0,
+                        fontSize: 20.0,
                         color: Colors.white,
                       ),
                       softWrap: true,

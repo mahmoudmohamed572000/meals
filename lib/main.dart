@@ -4,6 +4,7 @@ import 'package:meals/layout/home_layout.dart';
 import 'package:meals/modules/filters/filters_screen.dart';
 import 'package:meals/modules/meals/meals_screen.dart';
 import 'package:meals/modules/meals/meal_screen.dart';
+import 'package:meals/modules/on_boarding/on_boarding_screen.dart';
 import 'package:meals/modules/themes/themes_screen.dart';
 import 'package:meals/shared/cubit/cubit.dart';
 import 'package:meals/shared/cubit/states.dart';
@@ -12,18 +13,22 @@ import 'package:meals/shared/network/local/cache_helper.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await CacheHelper.init();
+  bool value = CacheHelper.getBool(key: 'watched') ?? false;
+  Widget homeScreen = value ? const HomeLayout() : const OnBoardingScreen();
   runApp(
     BlocProvider(
       create: (context) => MealsCubit()
         ..getData()
         ..setFilters(),
-      child: const MyApp(),
+      child: MyApp(homeScreen),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Widget homeScreen;
+
+  const MyApp(this.homeScreen, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +58,7 @@ class MyApp extends StatelessWidget {
                       const TextStyle(color: Color.fromRGBO(20, 50, 50, 1)),
                   titleLarge: const TextStyle(
                     color: Colors.black87,
-                    fontSize: 18.0,
+                    fontSize: 15.0,
                     fontFamily: 'RobotoCondensed',
                     fontWeight: FontWeight.bold,
                   ),
@@ -78,7 +83,7 @@ class MyApp extends StatelessWidget {
                   bodyLarge: const TextStyle(color: Colors.white70),
                   titleLarge: const TextStyle(
                     color: Colors.white70,
-                    fontSize: 18.0,
+                    fontSize: 15.0,
                     fontFamily: 'RobotoCondensed',
                     fontWeight: FontWeight.bold,
                   ),
@@ -86,7 +91,8 @@ class MyApp extends StatelessWidget {
           ),
           debugShowCheckedModeBanner: false,
           routes: {
-            '/': (context) => const HomeLayout(),
+            '/': (context) => homeScreen,
+            HomeLayout.routeName: (context) => const HomeLayout(),
             MealsScreen.routeName: (context) => const MealsScreen(),
             MealScreen.routeName: (context) => const MealScreen(),
             FiltersScreen.routeName: (context) => const FiltersScreen(),

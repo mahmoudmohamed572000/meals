@@ -72,8 +72,8 @@ class MealsCubit extends Cubit<MealsStates> {
           }
         }
       }
-      availableCategories = ac;
     }
+    availableCategories = ac;
     emit(MealsSetFiltersState());
   }
 
@@ -187,6 +187,15 @@ class MealsCubit extends Cubit<MealsStates> {
         favoriteMeals.add(dummyMeals.firstWhere((meal) => meal.id == mealId));
       }
     }
+    List<Meal> fm = [];
+    for (var fMeal in favoriteMeals) {
+      for (var aMeal in availableMeals) {
+        if (fMeal.id == aMeal.id) {
+          fm.add(fMeal);
+        }
+      }
+    }
+    favoriteMeals = fm;
     themeText = CacheHelper.getString(key: 'themeText') ?? 's';
     if (themeText == 'l') {
       tm = ThemeMode.light;

@@ -21,14 +21,14 @@ class MealScreen extends StatelessWidget {
         final meal = dummyMeals.firstWhere((meal) => meal.id == mealId);
         var cubit = MealsCubit.get(context);
         return Scaffold(
-          appBar: AppBar(title: Text(meal.title)),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 300.0,
-                  width: double.infinity,
-                  child: Hero(
+          body: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                expandedHeight: 300.0,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Text(meal.title),
+                  background: Hero(
                     tag: mealId,
                     child: InteractiveViewer(
                       child: FadeInImage(
@@ -40,32 +40,39 @@ class MealScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (isLandscape)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
+              ),
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    if (isLandscape)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          buildSectionTitle(context, 'Ingredients'),
-                          buildContainer(listSteps(meal, context)),
+                          Column(
+                            children: [
+                              buildSectionTitle(context, 'Ingredients'),
+                              buildContainer(listSteps(meal, context), context),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              buildSectionTitle(context, 'Steps'),
+                              buildContainer(listIngredients(meal), context),
+                            ],
+                          ),
                         ],
                       ),
-                      const SizedBox(width: 20.0),
-                      Column(
-                        children: [
-                          buildSectionTitle(context, 'Steps'),
-                          buildContainer(listIngredients(meal)),
-                        ],
-                      ),
-                    ],
-                  ),
-                if (!isLandscape) buildSectionTitle(context, 'Ingredients'),
-                if (!isLandscape) buildContainer(listSteps(meal, context)),
-                if (!isLandscape) buildSectionTitle(context, 'Steps'),
-                if (!isLandscape) buildContainer(listIngredients(meal)),
-                const SizedBox(height: 20.0),
-              ],
-            ),
+                    if (!isLandscape) buildSectionTitle(context, 'Ingredients'),
+                    if (!isLandscape)
+                      buildContainer(listSteps(meal, context), context),
+                    if (!isLandscape) buildSectionTitle(context, 'Steps'),
+                    if (!isLandscape)
+                      buildContainer(listIngredients(meal), context),
+                    const SizedBox(height: 20.0),
+                  ],
+                ),
+              ),
+            ],
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
@@ -81,6 +88,7 @@ class MealScreen extends StatelessWidget {
 
   Widget listSteps(meal, context) {
     return ListView.builder(
+      padding: const EdgeInsets.all(0.0),
       itemBuilder: (ctx, index) => Card(
         color: Theme.of(context).colorScheme.secondary,
         child: Padding(
@@ -102,6 +110,7 @@ class MealScreen extends StatelessWidget {
 
   Widget listIngredients(meal) {
     return ListView.builder(
+      padding: const EdgeInsets.all(0.0),
       itemBuilder: (ctx, index) => Column(
         children: [
           ListTile(

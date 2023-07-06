@@ -7,8 +7,12 @@ import 'package:meals/shared/cubit/states.dart';
 
 class ThemesScreen extends StatelessWidget {
   static const routeName = 'Themes';
+  final bool fromOnBoarding;
 
-  const ThemesScreen({super.key});
+  const ThemesScreen({
+    super.key,
+    this.fromOnBoarding = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,21 +21,27 @@ class ThemesScreen extends StatelessWidget {
       builder: (context, state) {
         var cubit = MealsCubit.get(context);
         return Scaffold(
-          appBar: AppBar(
-            title: const Text('Your Themes'),
-          ),
-          body: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20.0),
-                child: Text(
-                  'Adjust your themes selection',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
+          body: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                pinned: false,
+                title: fromOnBoarding ? null : const Text('Your Themes'),
+                backgroundColor: fromOnBoarding
+                    ? Theme.of(context).canvasColor
+                    : Theme.of(context).colorScheme.primary,
+                elevation: fromOnBoarding ? 0.0 : 5.0,
               ),
-              Expanded(
-                child: ListView(
-                  children: [
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    Container(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text(
+                        'Adjust your themes selection',
+                        style: Theme.of(context).textTheme.titleLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                     Container(
                       padding: const EdgeInsets.all(20.0),
                       child: Text(
@@ -75,12 +85,13 @@ class ThemesScreen extends StatelessWidget {
                     ),
                     buildLastSection(context, 'primary', cubit),
                     buildLastSection(context, 'accent', cubit),
+                    SizedBox(height: fromOnBoarding ? 80.0 : 20),
                   ],
                 ),
               ),
             ],
           ),
-          drawer: mainDrawer(context),
+          drawer: fromOnBoarding ? null : mainDrawer(context),
         );
       },
     );
